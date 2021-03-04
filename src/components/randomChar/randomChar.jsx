@@ -43,7 +43,7 @@ export default class RandomChar extends React.Component {
         const content = !(loading || error) ? <View char={char} /> : null;
 
         return (
-            <div className="random-block rounded">
+            <div className="random-block rounded mb-3">
                 {errorMessage}
                 {spinner}
                 {content}
