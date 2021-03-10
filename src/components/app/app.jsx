@@ -3,13 +3,20 @@ import { Col, Row, Container, Button } from 'reactstrap';
 
 import Header from '../header';
 import RandomChar from '../randomChar';
-import ItemList from '../itemList';
-import CharDetails from '../charDetails';
+import ErrorMessage from '../errorMessage';
+import CharactersPage from '../pages/charactersPage';
+import BooksPage from '../pages/booksPage';
+import HousesPage from '../pages/housesPage';
 
 export default class App extends React.Component {
     state = {
-        showRandomChar: true
+        showRandomChar: true,
+        error: false
     };
+
+    componentDidCatch() {
+        this.setState({ error: true });
+    }
 
     toggleRandomChar = () => {
         this.setState((state) => {
@@ -17,10 +24,13 @@ export default class App extends React.Component {
                 showRandomChar: !state.showRandomChar
             };
         });
-    };
+    }
 
     render() {
-        const char = this.state.showRandomChar ? <RandomChar /> : null;
+        const { showRandomChar, error } = this.state;
+        const char = showRandomChar ? <RandomChar /> : null;
+
+        if (error) return <ErrorMessage />;
 
         return (
             <>
@@ -28,24 +38,18 @@ export default class App extends React.Component {
                     <Header />
                 </Container>
                 <Container>
-                    <Row>
+                    <Row className="mb-3">
                         <Col lg={{ size: 5, offset: 0 }}>
                             {char}
                             <Button
-                                className="mb-3"
                                 color="primary"
                                 onClick={this.toggleRandomChar}
                             >Toggle random character</Button>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col md='6'>
-                            <ItemList />
-                        </Col>
-                        <Col md='6'>
-                            <CharDetails />
-                        </Col>
-                    </Row>
+                    <CharactersPage />
+                    <BooksPage />
+                    <HousesPage />
                 </Container>
             </>
         );

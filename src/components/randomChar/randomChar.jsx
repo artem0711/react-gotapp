@@ -9,11 +9,6 @@ import gotService from '../../services/gotService';
 import './randomChar.css';
 
 export default class RandomChar extends React.Component {
-    constructor() {
-        super();
-        this.updateChar();
-    }
-
     gotService = new gotService();
 
     state = {
@@ -22,11 +17,20 @@ export default class RandomChar extends React.Component {
         error: false
     }
 
+    componentDidMount() {
+        this.timerId = setInterval(this.updateChar, 1500);
+        this.updateChar();
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerId);
+    }
+
     onCharLoaded = (char) => { this.setState({ char, loading: false }); }
 
     onError = () => { this.setState({ loading: false, error: true }); }
 
-    updateChar() {
+    updateChar = () => {
         const id = Math.floor(Math.random() * 130 + 20);
         // const id = 9999999999;
 
