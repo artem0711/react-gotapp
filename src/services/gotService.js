@@ -2,7 +2,8 @@ export default class GotService {
     constructor() {
         this._apiBase = 'https://www.anapioficeandfire.com/api';
     }
-    async getResource(url) {
+
+    getResource = async (url) => {
         const res = await fetch(`${this._apiBase}${url}`);
 
         if (!res.ok) {
@@ -12,63 +13,75 @@ export default class GotService {
         return await res.json();
     }
 
-    async getAllCharacters() {
+    getAllCharacters = async () => {
         const res = await this.getResource('/characters?page=5&pageSize=10');
-        return res.map(this._transformCharacter(res));
+        return res.map(this._transformCharacter);
     }
 
-    async getCharacter(charId) {
+    getCharacter = async (charId) => {
         const res = await this.getResource(`/characters/${charId}`);
         return this._transformCharacter(res);
     }
 
-    async getAllBooks() {
-        const res = await this.getResource('/books?page=5&pageSize=10');
-        return res.map(this._transformBook(res));
+    getAllBooks = async () => {
+        const res = await this.getResource('/books?page=1&pageSize=10');
+        return res.map(this._transformBook);
     }
 
-    async getBook(bookId) {
+    getBook = async (bookId) => {
         const res = await this.getResource(`/books/${bookId}`);
         return this._transformBook(res);
     }
 
-    async getAllHouses() {
+    getAllHouses = async () => {
         const res = await this.getResource('/houses?page=5&pageSize=10');
-        return res.map(this._transformHouse(res));
+        return res.map(this._transformHouse);
     }
 
-    async getHouse(houseId) {
+    getHouse = async (houseId) => {
         const res = await this.getResource(`/houses/${houseId}`);
         return this._transformHouse(res);
     }
 
-    _transformCharacter(char) {
+    isSet(data) {
+        return data ? data : 'no data :(';
+    }
+
+    _extractId = (item) => {
+        const idRegExp = /\/([0-9]*)$/;
+        return item.url.match(idRegExp)[1];
+    }
+
+    _transformCharacter = (char) => {
         return {
-            name: char.name ? char.name : 'no data :(',
-            gender: char.gender ? char.gender : 'no data :(',
-            born: char.born ? char.born : 'no data :(',
-            died: char.died ? char.died : 'no data :(',
-            culture: char.culture ? char.culture : 'no data :('
+            id: this._extractId(char),
+            name: this.isSet(char.name),
+            gender: this.isSet(char.gender),
+            born: this.isSet(char.born),
+            died: this.isSet(char.died),
+            culture: this.isSet(char.culture)
         };
     }
 
-    _transformBook(book) {
+    _transformBook = (book) => {
         return {
-            name: book.name ? book.name : 'no data :(',
-            numberOfPages: book.numberOfPages ? book.numberOfPages : 'no data :(',
-            publiser: book.publiser ? book.publiser : 'no data :(',
-            released: book.released ? book.released : 'no data :('
+            id: this._extractId(book),
+            name: this.isSet(book.name),
+            numberOfPages: this.isSet(book.numberOfPages),
+            publisher: this.isSet(book.publisher),
+            released: this.isSet(book.released)
         };
     }
 
-    _transformHouse(house) {
+    _transformHouse = (house) => {
         return {
-            name: house.name ? house.name : 'no data :(',
-            region: house.region ? house.region : 'no data :(',
-            words: house.words ? house.words : 'no data :(',
-            titles: house.titles ? house.titles : 'no data :(',
-            overlord: house.overlord ? house.overlord : 'no data :(',
-            ancestralWeapons: house.ancestralWeapons ? house.ancestralWeapons : 'no data :('
+            id: this._extractId(house),
+            name: this.isSet(house.name),
+            region: this.isSet(house.region),
+            words: this.isSet(house.words),
+            titles: this.isSet(house.titles),
+            overlord: this.isSet(house.overlord),
+            ancestralWeapons: this.isSet(house.ancestralWeapons)
         };
     }
 }
