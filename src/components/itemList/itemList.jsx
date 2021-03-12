@@ -1,5 +1,6 @@
 import React from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
@@ -15,6 +16,10 @@ export default class ItemList extends React.Component {
         itemList: null,
         loading: true,
         error: false
+    }
+
+    static propTypes = {
+        getData: PropTypes.func
     }
 
     onItemLoaded = (itemList) => { this.setState({ itemList, loading: false }); }
@@ -47,9 +52,8 @@ export default class ItemList extends React.Component {
 
     render() {
         const { itemList, loading, error } = this.state;
-        let classes = null;
-
-        classes = loading ? 'list-group-item' : '';
+        let classes = 'mb-3';
+        classes += loading ? ' list-group-item' : '';
         const errorMessage = error ? <ErrorMessage /> : null;
         const spinner = loading ? <Spinner /> : null;
         const content = !(loading || error) ? <ListGroup className="item-list">{this.renderItems(itemList)}</ListGroup> : null;

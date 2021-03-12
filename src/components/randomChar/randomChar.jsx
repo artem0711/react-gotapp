@@ -1,8 +1,7 @@
 import React from 'react';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import PropTypes from 'prop-types';
 
-import Spinner from '../spinner';
-import ErrorMessage from '../errorMessage';
+import ItemDetails, { Field } from '../itemDetails';
 
 import gotService from '../../services/gotService';
 
@@ -12,13 +11,21 @@ export default class RandomChar extends React.Component {
     gotService = new gotService();
 
     state = {
-        char: {},
-        loading: true,
-        error: false
+        charId: null
+    }
+
+    static defaultProps = {
+        interval: 15000
+    }
+
+    static propTypes = {
+        interval: PropTypes.number
     }
 
     componentDidMount() {
-        this.timerId = setInterval(this.updateChar, 1500);
+        const { interval } = this.props;
+
+        this.timerId = setInterval(this.updateChar, interval);
         this.updateChar();
     }
 
@@ -26,60 +33,28 @@ export default class RandomChar extends React.Component {
         clearInterval(this.timerId);
     }
 
-    onCharLoaded = (char) => { this.setState({ char, loading: false }); }
-
-    onError = () => { this.setState({ loading: false, error: true }); }
-
     updateChar = () => {
-        const id = Math.floor(Math.random() * 130 + 20);
+        const charId = Math.floor(Math.random() * 130 + 20);
         // const id = 9999999999;
 
-        this.gotService.getCharacter(id)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
+        this.setState({ charId });
     }
 
     render() {
-        const { char, loading, error } = this.state;
-
-        const errorMessage = error ? <ErrorMessage /> : null;
-        const spinner = loading ? <Spinner /> : null;
-        const content = !(loading || error) ? <View char={char} /> : null;
+        const { charId } = this.state;
 
         return (
-            <div className="random-block rounded mb-3">
-                {errorMessage}
-                {spinner}
-                {content}
-            </div>
+            <ItemDetails
+                type="character"
+                itemId={charId}
+                random={true}
+                getData={this.gotService.getCharacter}
+            >
+                <Field field="gender" label="Gender" />
+                <Field field="born" label="Born" />
+                <Field field="died" label="Died" />
+                <Field field="culture" label="Culture" />
+            </ItemDetails>
         );
     }
-}
-
-const View = ({ char }) => {
-    const { name, gender, born, died, culture } = char;
-
-    return (
-        <>
-            <h4>Random Character: {name}</h4>
-            <ListGroup flush>
-                <ListGroupItem className="d-flex justify-content-between">
-                    <span className="term">Gender</span>
-                    <span>{gender}</span>
-                </ListGroupItem>
-                <ListGroupItem className="d-flex justify-content-between">
-                    <span className="term">Born</span>
-                    <span>{born}</span>
-                </ListGroupItem>
-                <ListGroupItem className="d-flex justify-content-between">
-                    <span className="term">Died</span>
-                    <span>{died}</span>
-                </ListGroupItem>
-                <ListGroupItem className="d-flex justify-content-between">
-                    <span className="term">Culture</span>
-                    <span>{culture}</span>
-                </ListGroupItem>
-            </ListGroup>
-        </>
-    );
 }

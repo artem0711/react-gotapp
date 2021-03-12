@@ -1,11 +1,11 @@
 import React from 'react';
 
-import ItemList from '../../itemList';
-import ItemDetails, { Field } from '../../itemDetails';
-import ErrorMessage from '../../errorMessage';
-import RowBlock from '../../rowBlock';
+import ItemList from '../itemList';
+import ItemDetails, { Field } from '../itemDetails';
+import ErrorMessage from '../errorMessage';
+import RowBlock from '../rowBlock';
 
-import gotService from '../../../services/gotService';
+import gotService from '../../services/gotService';
 
 export default class CharactersPage extends React.Component {
     gotService = new gotService();
@@ -37,6 +37,7 @@ export default class CharactersPage extends React.Component {
                 type="character"
                 itemId={selectedChar}
                 getData={this.gotService.getCharacter}
+                noSpinner={true}
             >
                 <Field field="gender" label="Gender" />
                 <Field field="born" label="Born" />

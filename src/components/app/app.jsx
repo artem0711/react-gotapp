@@ -1,12 +1,11 @@
 import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Col, Row, Container, Button } from 'reactstrap';
 
 import Header from '../header';
 import RandomChar from '../randomChar';
 import ErrorMessage from '../errorMessage';
-import CharactersPage from '../pages/charactersPage';
-import BooksPage from '../pages/booksPage';
-import HousesPage from '../pages/housesPage';
+import { BooksItem, BooksPage, CharactersPage, HousesPage } from '../pages';
 
 export default class App extends React.Component {
     state = {
@@ -33,25 +32,33 @@ export default class App extends React.Component {
         if (error) return <ErrorMessage />;
 
         return (
-            <>
-                <Container>
-                    <Header />
-                </Container>
-                <Container>
-                    <Row className="mb-3">
-                        <Col lg={{ size: 5, offset: 0 }}>
-                            {char}
-                            <Button
-                                color="primary"
-                                onClick={this.toggleRandomChar}
-                            >Toggle random character</Button>
-                        </Col>
-                    </Row>
-                    <CharactersPage />
-                    <BooksPage />
-                    <HousesPage />
-                </Container>
-            </>
+            <Router>
+                <div className="app">
+                    <Container>
+                        <Header />
+                    </Container>
+                    <Container>
+                        <Row className="mb-3">
+                            <Col lg={{ size: 6, offset: 0 }}>
+                                {char}
+                                <Button
+                                    color="primary"
+                                    onClick={this.toggleRandomChar}
+                                >Toggle random character</Button>
+                            </Col>
+                        </Row>
+                        <Route path="/characters" component={CharactersPage} />
+                        <Route path="/houses" component={HousesPage} />
+                        <Route path="/books" exact component={BooksPage} />
+                        <Route path="/books/:bookId" render={
+                            ({ match }) => {
+                                const { bookId } = match.params;
+                                return <BooksItem bookId={bookId} />;
+                            }
+                        } />
+                    </Container>
+                </div>
+            </Router>
         );
     }
 }

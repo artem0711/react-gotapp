@@ -1,11 +1,11 @@
 import React from 'react';
 
-import ItemList from '../../itemList';
-import ItemDetails, { Field } from '../../itemDetails';
-import ErrorMessage from '../../errorMessage';
-import RowBlock from '../../rowBlock';
+import ItemList from '../itemList';
+import ItemDetails, { Field } from '../itemDetails';
+import ErrorMessage from '../errorMessage';
+import RowBlock from '../rowBlock';
 
-import gotService from '../../../services/gotService';
+import gotService from '../../services/gotService';
 
 export default class HousesPage extends React.Component {
     gotService = new gotService();
@@ -37,6 +37,7 @@ export default class HousesPage extends React.Component {
                 type="house"
                 itemId={selectedHouse}
                 getData={this.gotService.getHouse}
+                noSpinner={true}
             >
                 <Field field="region" label="Region" />
                 <Field field="words" label="Words" />

@@ -3,7 +3,7 @@ import { Col, Row } from 'reactstrap';
 
 const RowBlock = ({ left, right }) => {
     return (
-        <Row className="mb-3">
+        <Row>
             <Col md="6">
                 {left}
             </Col>

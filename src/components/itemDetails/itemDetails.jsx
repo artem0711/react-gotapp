@@ -1,6 +1,8 @@
 import React from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
+import PropTypes from 'prop-types';
 
+import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
 
 import gotService from '../../services/gotService';
@@ -21,7 +23,19 @@ export default class ItemDetails extends React.Component {
 
     state = {
         item: null,
+        loading: true,
         error: false
+    }
+
+    static defaultProps = {
+        random: false,
+        noSpinner: false
+    }
+
+    static propTypes = {
+        getData: PropTypes.func,
+        type: PropTypes.string,
+        children: PropTypes.array
     }
 
     componentDidMount() {
@@ -34,13 +48,14 @@ export default class ItemDetails extends React.Component {
         }
     }
 
-    onDetailsLoaded = (item) => { this.setState({ item }); }
+    onDetailsLoaded = (item) => { this.setState({ item, loading: false }); }
 
-    onError = () => { this.setState({ error: true }); }
+    onError = () => { this.setState({ error: true, loading: false }); }
 
     updateItem() {
-        const { itemId, getData } = this.props;
+        const { itemId, getData, noSpinner } = this.props;
 
+        if (noSpinner) this.setState({ laoding: false });
         if (!itemId) return;
 
         getData(itemId)
@@ -49,16 +64,24 @@ export default class ItemDetails extends React.Component {
     }
 
     render() {
-        const { item, error } = this.state;
-        const { type, children } = this.props;
+        const { item, loading, error } = this.state;
+        const { type, children, random, noSpinner } = this.props;
 
-        if (!item && !error) return <span className="select-error">Please a select {type}</span>;
+        let content = null;
+        let infoText = noSpinner ? <h4>Please select a {type}</h4> : null;
 
+        const spinner = (loading && !noSpinner) ? <Spinner /> : null;
         const errorMessage = error ? <ErrorMessage /> : null;
-        const content = !error ? <View item={item} children={children} /> : null;
+
+        if (item) {
+            content = <View item={item} children={children} random={random} />;
+            infoText = null;
+        }
 
         return (
-            <div className="char-details rounded">
+            <div className="char-details mb-3 rounded">
+                {spinner}
+                {infoText}
                 {errorMessage}
                 {content}
             </div>
@@ -66,12 +89,12 @@ export default class ItemDetails extends React.Component {
     }
 }
 
-const View = ({ item, children }) => {
+const View = ({ item, children, random }) => {
     const { name } = item;
 
     return (
         <>
-            <h4>{name}</h4>
+            <h4>{random ? `Random character: ${name}` : name}</h4>
             <ListGroup flush>
                 {
                     React.Children.map(children, (child) => {
