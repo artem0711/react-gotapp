@@ -1,43 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import PropTypes from 'prop-types';
 
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
 
-import gotService from '../../services/gotService';
-
 import './itemList.css';
 
-export default class ItemList extends React.Component {
-    gotService = new gotService();
+export default function ItemList({ getData, onItemSelected, renderItem }) {
+    const [itemList, updateList] = useState([]);
+    const [error, onError] = useState(false);
 
-    state = {
-        itemList: null,
-        loading: true,
-        error: false
-    }
-
-    static propTypes = {
-        getData: PropTypes.func
-    }
-
-    onItemLoaded = (itemList) => { this.setState({ itemList, loading: false }); }
-
-    onError = () => { this.setState({ loading: false, error: true }); }
-
-    componentDidMount() {
-        const { getData } = this.props;
-
+    useEffect(() => {
         getData()
-            .then(this.onItemLoaded)
-            .catch(this.onError);
-    }
+            .then((data) => {
+                updateList(data);
+            })
+            .catch((error) => {
+                onError(error);
+            });
+    }, [getData])
 
-    renderItems(items) {
+    function renderItems(items) {
         return items.map((item) => {
             const { id } = item;
-            const { renderItem, onItemSelected } = this.props;
 
             return (
                 <ListGroupItem
@@ -50,20 +35,19 @@ export default class ItemList extends React.Component {
         });
     }
 
-    render() {
-        const { itemList, loading, error } = this.state;
-        let classes = 'mb-3';
-        classes += loading ? ' list-group-item' : '';
-        const errorMessage = error ? <ErrorMessage /> : null;
-        const spinner = loading ? <Spinner /> : null;
-        const content = !(loading || error) ? <ListGroup className="item-list">{this.renderItems(itemList)}</ListGroup> : null;
+    if (error) return <ErrorMessage />;
 
-        return (
-            <div className={classes}>
-                {errorMessage}
-                {spinner}
-                {content}
-            </div >
-        );
-    }
+    if (itemList.length === 0) return (
+        <div className="char-details mb-3 rounded">
+            <Spinner />
+        </div>
+    );
+
+    return (
+        <div className="mb-3">
+            <ListGroup className="item-list">
+                {renderItems(itemList)}
+            </ListGroup>
+        </div >
+    );
 }

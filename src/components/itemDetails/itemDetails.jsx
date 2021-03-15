@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import PropTypes from 'prop-types';
 
 import Spinner from '../spinner';
 import ErrorMessage from '../errorMessage';
-
-import gotService from '../../services/gotService';
 
 import './itemDetails.css';
 
@@ -18,75 +15,41 @@ export const Field = ({ item, field, label }) => {
     );
 }
 
-export default class ItemDetails extends React.Component {
-    gotService = new gotService();
+export default function ItemDetails({ getData, random = false, noSpinner = false, itemId, type, children }) {
+    const [item, updateItem] = useState([]);
+    const [error, onError] = useState(false);
 
-    state = {
-        item: null,
-        loading: true,
-        error: false
-    }
-
-    static defaultProps = {
-        random: false,
-        noSpinner: false
-    }
-
-    static propTypes = {
-        getData: PropTypes.func,
-        type: PropTypes.string,
-        children: PropTypes.array
-    }
-
-    componentDidMount() {
-        this.updateItem();
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.itemId !== prevProps.itemId) {
-            this.updateItem();
-        }
-    }
-
-    onDetailsLoaded = (item) => { this.setState({ item, loading: false }); }
-
-    onError = () => { this.setState({ error: true, loading: false }); }
-
-    updateItem() {
-        const { itemId, getData, noSpinner } = this.props;
-
-        if (noSpinner) this.setState({ laoding: false });
+    useEffect(() => {
         if (!itemId) return;
 
         getData(itemId)
-            .then(this.onDetailsLoaded)
-            .catch(this.onError);
+            .then((item) => {
+                updateItem(item);
+            })
+            .catch((error) => {
+                onError(error);
+            });
+    }, [getData, itemId])
+
+    if (error) return <ErrorMessage />;
+
+    let content = null;
+    let infoText = noSpinner ? <h4>Please select a {type}</h4> : null;
+
+    const spinner = (item.length === 0 && !noSpinner) ? <Spinner /> : null;
+
+    if (item.length !== 0) {
+        content = <View item={item} children={children} random={random} />;
+        infoText = null;
     }
 
-    render() {
-        const { item, loading, error } = this.state;
-        const { type, children, random, noSpinner } = this.props;
-
-        let content = null;
-        let infoText = noSpinner ? <h4>Please select a {type}</h4> : null;
-
-        const spinner = (loading && !noSpinner) ? <Spinner /> : null;
-        const errorMessage = error ? <ErrorMessage /> : null;
-
-        if (item) {
-            content = <View item={item} children={children} random={random} />;
-            infoText = null;
-        }
-
-        return (
-            <div className="char-details mb-3 rounded">
-                {spinner}
-                {infoText}
-                {errorMessage}
-                {content}
-            </div>
-        );
-    }
+    return (
+        <div className="char-details mb-3 rounded">
+            {spinner}
+            {infoText}
+            {content}
+        </div>
+    );
 }
 
 const View = ({ item, children, random }) => {
