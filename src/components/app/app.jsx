@@ -27,7 +27,7 @@ export default class App extends React.Component {
 
     render() {
         const { showRandomChar, error } = this.state;
-        const char = showRandomChar ? <RandomChar /> : null;
+        const randomChar = showRandomChar ? <RandomChar /> : null;
 
         if (error) return <ErrorMessage />;
 
@@ -40,7 +40,7 @@ export default class App extends React.Component {
                     <Container>
                         <Row className="mb-3">
                             <Col lg={{ size: 6, offset: 0 }}>
-                                {char}
+                                {randomChar}
                                 <Button
                                     color="primary"
                                     onClick={this.toggleRandomChar}
@@ -50,12 +50,15 @@ export default class App extends React.Component {
                         <Route path="/characters" component={CharactersPage} />
                         <Route path="/houses" component={HousesPage} />
                         <Route path="/books" exact component={BooksPage} />
-                        <Route path="/books/:bookId" render={
-                            ({ match }) => {
-                                const { bookId } = match.params;
-                                return <BooksItem bookId={bookId} />;
+                        <Route
+                            path="/books/:bookId"
+                            render={
+                                ({ match }) => {
+                                    const { bookId } = match.params;
+                                    return <BooksItem bookId={bookId} />;
+                                }
                             }
-                        } />
+                        />
                     </Container>
                 </div>
             </Router>

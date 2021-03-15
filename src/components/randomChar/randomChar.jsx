@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 
 import ItemDetails, { Field } from '../itemDetails';
 
-import gotService from '../../services/gotService';
+import GotService from '../../services/gotService';
 
 import './randomChar.css';
 
 export default class RandomChar extends React.Component {
-    gotService = new gotService();
-
     state = {
         charId: null
     }
@@ -48,7 +46,7 @@ export default class RandomChar extends React.Component {
                 type="character"
                 itemId={charId}
                 random={true}
-                getData={this.gotService.getCharacter}
+                getData={new GotService().getCharacter}
             >
                 <Field field="gender" label="Gender" />
                 <Field field="born" label="Born" />

@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import gotService from '../../services/gotService';
+import GotService from '../../services/gotService';
 import ItemDetails, { Field } from '../itemDetails';
 
 import ErrorMessage from '../errorMessage/';
 
 export default class BooksPage extends React.Component {
-    gotService = new gotService();
-
     state = {
         error: false
     }
@@ -29,7 +27,7 @@ export default class BooksPage extends React.Component {
             <ItemDetails
                 type="book"
                 itemId={bookId}
-                getData={this.gotService.getBook}
+                getData={new GotService().getBook}
             >
                 <Field field="numberOfPages" label="Number of pages" />
                 <Field field="publisher" label="Publisher" />

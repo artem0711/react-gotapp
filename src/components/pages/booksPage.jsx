@@ -4,11 +4,9 @@ import { withRouter } from 'react-router-dom';
 import ItemList from '../itemList';
 import ErrorMessage from '../errorMessage';
 
-import gotService from '../../services/gotService';
+import GotService from '../../services/gotService';
 
 class BooksPage extends React.Component {
-    gotService = new gotService();
-
     state = {
         error: false
     }
@@ -23,7 +21,7 @@ class BooksPage extends React.Component {
         return (
             <ItemList
                 onItemSelected={(bookId) => { this.props.history.push(bookId); }}
-                getData={this.gotService.getAllBooks}
+                getData={new GotService().getAllBooks}
                 renderItem={({ name }) => `${name}`}
             />
         );

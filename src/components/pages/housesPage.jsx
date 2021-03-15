@@ -5,11 +5,9 @@ import ItemDetails, { Field } from '../itemDetails';
 import ErrorMessage from '../errorMessage';
 import RowBlock from '../rowBlock';
 
-import gotService from '../../services/gotService';
+import GotService from '../../services/gotService';
 
 export default class HousesPage extends React.Component {
-    gotService = new gotService();
-
     state = {
         selectedHouse: null,
         error: false
@@ -27,7 +25,7 @@ export default class HousesPage extends React.Component {
         const houseList = (
             <ItemList
                 onItemSelected={this.onItemSelected}
-                getData={this.gotService.getAllHouses}
+                getData={new GotService().getAllHouses}
                 renderItem={({ name }) => `${name}`}
             />
         );
@@ -36,7 +34,7 @@ export default class HousesPage extends React.Component {
             <ItemDetails
                 type="house"
                 itemId={selectedHouse}
-                getData={this.gotService.getHouse}
+                getData={new GotService().getHouse}
                 noSpinner={true}
             >
                 <Field field="region" label="Region" />

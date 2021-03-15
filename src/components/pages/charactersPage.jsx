@@ -5,11 +5,9 @@ import ItemDetails, { Field } from '../itemDetails';
 import ErrorMessage from '../errorMessage';
 import RowBlock from '../rowBlock';
 
-import gotService from '../../services/gotService';
+import GotService from '../../services/gotService';
 
 export default class CharactersPage extends React.Component {
-    gotService = new gotService();
-
     state = {
         selectedChar: null,
         error: false
@@ -27,7 +25,7 @@ export default class CharactersPage extends React.Component {
         const charList = (
             <ItemList
                 onItemSelected={this.onItemSelected}
-                getData={this.gotService.getAllCharacters}
+                getData={new GotService().getAllCharacters}
                 renderItem={({ name, gender }) => `${name} (${gender})`}
             />
         );
@@ -36,7 +34,7 @@ export default class CharactersPage extends React.Component {
             <ItemDetails
                 type="character"
                 itemId={selectedChar}
-                getData={this.gotService.getCharacter}
+                getData={new GotService().getCharacter}
                 noSpinner={true}
             >
                 <Field field="gender" label="Gender" />
