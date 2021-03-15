@@ -19,7 +19,16 @@
     list-style-type: none;
 }
 
-.header .header-links li {
-    margin-right: 20px;
+.header .header-links a {
     font-size: 18px;
+}
+
+.header .header-links a:not(:last-child) {
+    margin-right: 20px;
+}
+
+.header .header-links a.active {
+    background: #007bff;
+    padding: .375rem .75rem;
+    border-radius: .25rem;
 }
